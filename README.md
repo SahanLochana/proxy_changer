@@ -1,105 +1,120 @@
-# Wi-Fi Proxy Auto-Switcher
+# 📶 Wi-Fi Proxy Auto-Switcher 🚀
 
-A lightweight, native Windows system tray application written in Rust that automatically configures Windows system proxy settings based on the currently connected Wi-Fi SSID.
+> ⚡ **100% Vibe Coded Application** ✨ Built with pure vibes, modern Rust, and AI pair-programming! 🤖🎧💻
 
----
-
-## Features
-
-- **Automatic Wi-Fi SSID Detection:** Monitors network state transitions in real time using Windows Native WLAN API (`WlanRegisterNotification`).
-- **Configurable Rules:** Define per-SSID proxy rules (`host:port`).
-- **Unmatched Behaviors:** Choose between disabling the proxy, keeping the current proxy, or applying a fallback default proxy when connected to unknown networks or disconnected.
-- **Manual Overrides:** Immediate "Apply Proxy Now" and "Clear Proxy" buttons in both the main window and the system tray menu.
-- **Debounced Updates:** Debounces rapid Wi-Fi notifications (500 ms) before querying the network state.
-- **Redundant Write Prevention:** Compares target proxy state against current registry settings before writing, avoiding unnecessary system notifications.
-- **Modern Windows 11 Dark Aesthetic:**
-  - Sleek dark theme UI with rounded cards, custom title bar, glowing toggle switches, and subtle borders.
-  - Live Connection Status card showing current Wi-Fi SSID and active proxy state badges.
-  - Interactive table of rules with inline selection, editing, and discovered SSID dropdown.
-  - Fallback radio options and quick action buttons ("Apply Proxy Now", "Clear Proxy", "Open Log File").
-- **Lightweight & Efficient:**
-  - Standalone `.exe` binary.
-  - Idle CPU ~0% (event-driven, no fast polling loops).
-  - No console window (`#![windows_subsystem = "windows"]`).
-- **Zero UAC / No Admin Required:** Uses only `HKCU` (`HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings` and `HKCU\Software\Microsoft\Windows\CurrentVersion\Run`).
-- **System Tray Integration:**
-  - Left-click tray icon to show/restore the window.
-  - Right-click tray menu: *Open Settings*, *Auto-Switch* (with checkmark), *Apply Proxy Now*, *Clear Proxy*, *Quit*.
-  - Tray tooltip shows current SSID, active proxy, and auto-switch state.
-  - Dynamic tray icon reflects active vs disabled state.
-  - Native balloon notifications on proxy changes (can be toggled on/off).
-- **Auto-Start with Windows:** Toggle in the UI writes/removes `"<exe path>" --hidden` to HKCU Run key.
-- **Single Instance:** Enforces single instance via a named mutex (`Global\WifiProxySwitcher_SingleInstance_Mutex`). Second launches restore the existing window and exit cleanly.
-- **Self-Trimming Logging:** Writes structured logs to `%APPDATA%\WifiProxySwitcher\app.log` with automatic rollover at 512 KB to `app.log.old`.
+A lightweight, native Windows system tray application crafted with 🦀 Rust that automatically configures Windows system proxy settings based on the currently connected Wi-Fi SSID.
 
 ---
 
-## Project Structure
+## 🌟 Highlights & Vibe Coding DNA
+
+- 🧘 **100% Vibe Coded:** Architected, styled, and polished entirely through prompt engineering and vibe coding excellence! 🌈✨
+- 🚀 **Blazing Fast & Featherweight:** Native Rust binary, ~0% idle CPU, and zero bloat! 🪶
+- 🎨 **Sleek Windows 11 Dark Aesthetic:** Gorgeous dark mode interface with custom titlebar, smooth toggle switches, and a compact 2-column layout! 🌌
+- 📜 **Built-In Live Activity Logs:** Inspect real-time logs inside the app with instant level filters (`INFO`, `WARN`, `ERROR`), search, and auto-scroll—no Notepad required! 🔍
+
+---
+
+## ✨ Features
+
+- 📡 **Automatic Wi-Fi SSID Detection:** Monitors network state transitions in real time using the Windows Native WLAN API (`WlanRegisterNotification`).
+- 🎯 **Configurable Per-SSID Rules:** Define custom proxy endpoints (`host:port`) mapped to specific Wi-Fi networks.
+- 🔀 **Smart Unmatched Behaviors:** Choose between disabling the proxy, keeping the current proxy, or applying a fallback default proxy when connected to unknown networks or disconnected.
+- ⚡ **Instant Manual Overrides:** Quick "Apply Now" and "Clear Proxy" buttons in both the app dashboard and the system tray menu.
+- ⏱️ **Debounced Updates:** Smooth 500 ms debouncing on rapid WLAN events prevents network flap jitter.
+- 🛡️ **Redundant Write Prevention:** Compares target proxy state against current registry values before writing, avoiding unnecessary system notifications.
+- 📊 **In-App Activity Logs Viewer:**
+  - 📋 Live console display with timestamps, styled badges, and selectable text for easy copying.
+  - 🏷️ Quick filter chips: **All**, **INFO** 🔵, **WARN** 🟡, **ERROR** 🔴.
+  - 🔎 Real-time search filter for SSIDs, proxy IPs, or keywords.
+  - 🔄 Auto-scroll toggle lock, manual refresh, and one-click log clearing.
+- 🖥️ **Modern Windows 11 Dark UI:**
+  - 🖼️ Custom embedded app logo & dynamic status badges (`enable.ico` / `disable.ico`).
+  - 📶 Live Connection Status banner displaying active Wi-Fi SSID and proxy status.
+  - 📝 Interactive rules manager with inline selection, editing, and discovered SSID dropdown.
+  - 🚫 Scroll-free compact window (`800×500`) with no window scrollbars.
+- 🔒 **Zero UAC / No Admin Privileges Required:** Operates strictly within user scope using `HKCU` (`HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings` and `HKCU\Software\Microsoft\Windows\CurrentVersion\Run`).
+- 📥 **Deep System Tray Integration:**
+  - 🖱️ Left-click tray icon to show/restore window.
+  - 📑 Right-click menu: *Open Settings*, *Auto-Switch* toggle, *Apply Proxy Now*, *Clear Proxy*, *Quit*.
+  - 💬 Hover tooltip displays live SSID, active proxy address, and auto-switch status.
+  - 🔄 Dynamic tray icon updates automatically between enabled and disabled states.
+  - 🔔 Native desktop notifications on proxy changes (can be toggled on/off).
+- 🚀 **Auto-Start with Windows:** Optional toggle to launch silently in the system tray on user login.
+- 🛑 **Single Instance Protection:** Enforces single instance via a named mutex (`Global\WifiProxySwitcher_SingleInstance_Mutex`). Second launches bring the existing window to the front.
+- 📝 **Self-Trimming File Logging:** Structured logs saved to `%APPDATA%\WifiProxySwitcher\app.log` with auto-rollover at 512 KB to `app.log.old`.
+
+---
+
+## 📁 Project Structure
 
 ```
 src/
-  ├── main.rs      // Entry point, single-instance mutex, --hidden flag, Tao event loop
-  ├── wifi.rs      // WLAN API client, SSID query, interface enumeration, notification callback
-  ├── proxy.rs     // Windows Internet Settings registry reader, applier, clearer, WinInet notification
-  ├── config.rs    // Configuration struct, JSON persistence, validation, unit tests
-  ├── logic.rs     // Decision matrix (SSID + config -> Action) & redundant write suppression
-  ├── ui.rs        // Tao borderless window, Wry WebView2, tray-icon, IPC message handling
-  ├── autostart.rs // HKCU Run key management
-  └── log.rs       // Thread-safe file logger with automatic size trimming
+  ├── main.rs      // 🚪 Entry point, single-instance mutex, --hidden flag, Tao event loop
+  ├── wifi.rs      // 📶 WLAN API client, SSID query, interface enumeration, notification callback
+  ├── proxy.rs     // 🌐 Windows Internet Settings registry reader, applier, WinInet refresh
+  ├── config.rs    // ⚙️ Configuration struct, JSON persistence, validation, unit tests
+  ├── logic.rs     // 🧠 Decision matrix (SSID + config -> Action) & redundant write suppression
+  ├── ui.rs        // 🖥️ Tao borderless window, Wry WebView2, tray-icon, IPC message handling
+  ├── autostart.rs // 🚀 HKCU Run key management for startup
+  └── log.rs       // 📜 Thread-safe logger, parser, read_logs, clear_logs & auto-trimming
 assets/
-  └── index.html   // Windows 11 Fluent dark theme UI (cards, toggle switch, table, badges)
-build.rs           // Asset generation & Windows resource embedding (winres)
+  ├── app_logo.ico // 🎨 Application window & resource icon
+  ├── enable.ico   // 🟢 Active proxy tray icon & status badge
+  ├── disable.ico  // ⚪ Direct / disabled tray icon & status badge
+  └── index.html   // 💻 Windows 11 Fluent dark UI (dashboard, rules manager, logs viewer)
+build.rs           // 📦 Windows resource embedding (winres)
 ```
 
 ---
 
-## Build Instructions
+## 🛠️ Build Instructions
 
-Requires Rust (stable toolchain) on Windows 10/11.
+Requires **Rust** (stable toolchain) on Windows 10/11.
 
 ```powershell
-# Run unit tests
+# 🧪 Run all unit tests
 cargo test
 
-# Build debug binary
+# 🔨 Build debug binary
 cargo build
 
-# Build optimized release binary (stripped, LTO enabled)
+# ⚡ Build optimized production release binary (LTO + stripped)
 cargo build --release
 ```
 
-The compiled release binary is located at:
+The compiled release binary is generated at:
 ```
 target/release/proxy_changer.exe
 ```
 
 ---
 
-## Running the Application
+## 🚀 Running the Application
 
-### Normal Mode (GUI window shown on startup)
+### 🖥️ Normal GUI Mode
 ```powershell
 .\target\release\proxy_changer.exe
 ```
 
-### Background / Tray-Only Mode (Used by Windows Autostart)
+### 🕶️ Background / Tray-Only Mode (Used by Windows Autostart)
 ```powershell
 .\target\release\proxy_changer.exe --hidden
 ```
 
 ---
 
-## Configuration & Logs
+## 💾 Configuration & Logs Storage
 
-All application data is stored in the standard user directory:
+All application data is safely saved in user AppData:
 ```
 %APPDATA%\WifiProxySwitcher\
-  ├── config.json   // Rules, master toggle, unmatched behavior, options
-  ├── app.log       // Active log file
-  └── app.log.old   // Rollover log file (trimmed when app.log exceeds 512 KB)
+  ├── config.json   // ⚙️ Rules, master toggle, unmatched behavior, preferences
+  ├── app.log       // 📜 Active log file
+  └── app.log.old   // 📦 Rollover log file (trimmed when app.log exceeds 512 KB)
 ```
 
-### Example `config.json`
+### 📄 Example `config.json`
 ```json
 {
   "enabled": true,
@@ -122,7 +137,11 @@ All application data is stored in the standard user directory:
 
 ---
 
-## Known Limits & Notes
+## 💡 Notes & Best Practices
 
-- **Windows 11 24H2 Location Permission:** Windows 11 24H2 may require Location permission for standard desktop applications to query the Wi-Fi SSID name. If connected to a network but the SSID cannot be read due to OS privacy settings, the status panel will display `SSID unavailable (check Location permission)` and log the condition.
-- **Case-Sensitive SSIDs:** As specified in the 802.11 standard, SSID names are matched case-sensitively.
+- 📍 **Windows 11 24H2 Location Permission:** Windows 11 24H2 may require Location permission for standard apps to read the Wi-Fi SSID name. If connected but the SSID cannot be read due to OS privacy settings, the status banner displays `SSID unavailable (check Location permission)` and logs the condition.
+- 🔤 **Case-Sensitive SSIDs:** As specified in the IEEE 802.11 standard, SSID names are matched case-sensitively.
+- ✨ **Vibe Check Passed:** 100% vibe-coded with love and focus! 💖🎉
+
+
+## Readme also write using Antigravity. LoL
