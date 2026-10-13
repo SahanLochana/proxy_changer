@@ -1326,12 +1326,24 @@
     }
   });
 
-  document.getElementById('btn-add-rule').addEventListener('click', () => {
+  function clearRuleEditor() {
     editingRuleIndex = null;
-    document.getElementById('rule-editor-title').innerText = 'Rule Editor (Add New)';
+    selectedRuleIndex = null;
+    document.getElementById('rule-editor-title').innerText = 'Rule Editor';
     document.getElementById('input-ssid').value = '';
     document.getElementById('input-proxy').value = '';
+    const select = document.getElementById('select-ssid');
+    if (select) {
+      select.value = '';
+      select.selectedIndex = 0;
+    }
     hideError();
+  }
+  window.clearRuleEditor = clearRuleEditor;
+
+  document.getElementById('btn-add-rule').addEventListener('click', () => {
+    clearRuleEditor();
+    document.getElementById('rule-editor-title').innerText = 'Rule Editor (Add New)';
     document.getElementById('input-ssid').focus();
   });
 
@@ -1350,11 +1362,7 @@
   });
 
   document.getElementById('btn-cancel-rule').addEventListener('click', () => {
-    editingRuleIndex = null;
-    document.getElementById('rule-editor-title').innerText = 'Rule Editor';
-    document.getElementById('input-ssid').value = '';
-    document.getElementById('input-proxy').value = '';
-    hideError();
+    clearRuleEditor();
   });
 
   document.getElementById('btn-save-rule').addEventListener('click', () => {
@@ -1375,6 +1383,8 @@
       ssid,
       proxy
     });
+
+    clearRuleEditor();
   });
 
   document.getElementById('btn-delete-rule').addEventListener('click', () => {

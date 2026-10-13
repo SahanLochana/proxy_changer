@@ -385,7 +385,7 @@ fn handle_ipc_message(
             }
 
             let _ = state.config.save();
-            let _ = webview.evaluate_script("hideError();");
+            let _ = webview.evaluate_script("hideError(); if (window.clearRuleEditor) { window.clearRuleEditor(); }");
             evaluate_network_rules(state, webview, tray_icon, icon_enabled, icon_disabled, item_auto, true);
         }
         "delete_rule" => {

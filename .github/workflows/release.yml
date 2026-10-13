@@ -24,27 +24,45 @@ jobs:
       - name: 💾 Rust Cache
         uses: Swatinem/rust-cache@v2
 
+      - name: 🏷️ Extract version from Cargo.toml
+        id: get_version
+        shell: pwsh
+        run: |
+          $version = (Get-Content Cargo.toml | Select-String -Pattern '^version\s*=').ToString().Split('"')[1]
+          Write-Host "Detected version: $version"
+          "version=$version" >> $env:GITHUB_OUTPUT
+
       - name: 🧪 Run tests
         run: cargo test --verbose
 
       - name: 🔨 Build release executable
         run: cargo build --release
 
-      - name: 📦 Publish GitHub Release
+      - name: 📦 Rename release binary
+        shell: pwsh
+        run: |
+          $ver = "${{ steps.get_version.outputs.version }}"
+          $dest = "Wi-Fi Proxy Switcher $ver.exe"
+          Copy-Item "target/release/proxy_changer.exe" -Destination $dest
+          Write-Host "Prepared release executable: $dest"
+
+      - name: 🚀 Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: latest
-          name: "Latest Build 🚀"
+          name: "Wi-Fi Proxy Switcher v${{ steps.get_version.outputs.version }} 🚀"
           body: |
-            ### 📶 Wi-Fi Proxy Auto-Switcher — Automated Build 🚀
+            ### 📶 Wi-Fi Proxy Auto-Switcher v${{ steps.get_version.outputs.version }} 🚀
 
+            - **Version:** `${{ steps.get_version.outputs.version }}`
             - **Commit:** `${{ github.sha }}`
             - **Branch:** `${{ github.ref_name }}`
             - **Platform:** Windows x64 (Native binary)
 
             #### 📥 Download
-            Download `proxy_changer.exe` below and run directly.
-          files: target/release/proxy_changer.exe
+            Download **`Wi-Fi Proxy Switcher ${{ steps.get_version.outputs.version }}.exe`** below and run directly.
+          files: |
+            Wi-Fi Proxy Switcher ${{ steps.get_version.outputs.version }}.exe
           make_latest: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
