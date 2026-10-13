@@ -127,7 +127,7 @@ fn main() {
     // Embed resource for Windows
     if std::env::var("CARGO_CFG_TARGET_OS").unwrap_or_default() == "windows" {
         let mut res = winres::WindowsResource::new();
-        res.set_icon(enabled_icon.to_str().unwrap());
+        res.set_icon("assets/app_logo.ico");
         res.set("FileDescription", "Wi-Fi Proxy Auto-Switcher");
         res.set("ProductName", "WifiProxySwitcher");
         if let Err(e) = res.compile() {

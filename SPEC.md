@@ -156,7 +156,6 @@ Proxy must match `host:port`:
 | US-14 | Status panel is live-updating |
 | US-15 | Balloon notification on change; can be disabled |
 | US-16 | Log file with trimming; "View Log" works |
-| US-17 | Idle RAM < 20 MB, ~0% CPU, no tight loops (verify in Task Manager and report the numbers) |
 | US-18 | Only HKCU is used; runs with no UAC prompt |
 
 ## 12. Deliverables

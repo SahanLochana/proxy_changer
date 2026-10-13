@@ -21,7 +21,7 @@ fn main() {
     let mutex = unsafe { CreateMutexW(None, true, mutex_name) };
     if mutex.is_ok() && unsafe { GetLastError() } == ERROR_ALREADY_EXISTS {
         // Bring existing window to front if running
-        let window_title = w!("Wi-Fi Proxy Auto-Switcher");
+        let window_title = w!("Wi-Fi Proxy Switcher");
         let hwnd = unsafe { FindWindowW(None, window_title) };
         if let Ok(h) = hwnd {
             if !h.is_invalid() {
@@ -34,25 +34,14 @@ fn main() {
         return;
     }
 
-    log_info!("Starting Wi-Fi Proxy Auto-Switcher");
+    log_info!("Starting Wi-Fi Proxy Switcher");
 
     // 2. Parse command-line args for --hidden flag
     let args: Vec<String> = std::env::args().collect();
     let start_hidden = args.iter().any(|arg| arg == "--hidden");
 
-    // 3. Initialize Native Windows GUI
-    native_windows_gui::init().expect("Failed to initialize Native Windows GUI");
-
-    // 4. Build UI and initialize application
-    match ui::AppUi::build(start_hidden) {
-        Ok(_app) => {
-            log_info!("UI initialized successfully, entering event loop");
-            // 5. Enter event loop
-            native_windows_gui::dispatch_thread_events();
-            log_info!("Exited event loop, shutting down");
-        }
-        Err(err) => {
-            log_error!("Failed to build application UI: {}", err);
-        }
+    // 3. Run Tao / Wry event loop
+    if let Err(err) = ui::run(start_hidden) {
+        log_error!("Failed to run application UI: {}", err);
     }
 }

@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wi-Fi Proxy Switcher</title>
+<style>
+  :root {
+    --bg-main: #14161b;
+    --card-bg: rgba(28, 32, 40, 0.82);
+    --card-border: rgba(255, 255, 255, 0.08);
+    --card-border-focus: rgba(56, 189, 248, 0.4);
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --accent: #38bdf8;
+    --accent-hover: #0284c7;
+    --accent-glow: rgba(56, 189, 248, 0.25);
+    --green-bg: rgba(52, 211, 153, 0.15);
+    --green-text: #34d399;
+    --green-border: rgba(52, 211, 153, 0.3);
+    --danger: #f87171;
+    --danger-bg: rgba(248, 113, 113, 0.15);
+    --input-bg: #1a1e26;
+    --input-border: rgba(255, 255, 255, 0.12);
+    --btn-secondary: #242934;
+    --btn-secondary-hover: #2f3644;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 12px;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  html, body {
+    font-family: "Segoe UI Variable Text", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-main);
+    color: var(--text-primary);
+    font-size: 12.5px;
+    line-height: 1.4;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Titlebar / Drag Region */
+  .titlebar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 14px 6px 14px;
+    background: rgba(18, 20, 25, 0.96);
+    border-bottom: 1px solid var(--card-border);
+    flex-shrink: 0;
+  }
+
+  .titlebar-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .app-logo {
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+  }
+
+  .app-logo img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+  }
+
+  .app-title-group h1 {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+    color: var(--text-primary);
+    line-height: 1.2;
+  }
+
+  .app-title-group p {
+    font-size: 10.5px;
+    color: var(--text-secondary);
+    line-height: 1.1;
+  }
+
+  .titlebar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .auto-switch-group {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .auto-switch-label {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+
+  /* Modern Toggle Switch */
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 38px;
+    height: 20px;
+  }
+
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: var(--btn-secondary);
+    border: 1px solid var(--card-border);
+    transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 20px;
+  }
+
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 14px;
+    width: 14px;
+    left: 2px;
+    bottom: 2px;
+    background-color: #cbd5e1;
+    transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 50%;
+  }
+
+  input:checked + .slider {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 0 10px var(--accent-glow);
+  }
+
+  input:checked + .slider:before {
+    transform: translateX(18px);
+    background-color: #ffffff;
+  }
+
+  /* Window control buttons */
+  .win-controls {
+    display: flex;
+    align-items: center;
+    margin-left: 4px;
+  }
+
+  .win-btn {
+    width: 28px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .win-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+  }
+
+  .win-btn.close:hover {
+    background: #e11d48;
+    color: #ffffff;
+  }
+
+  /* Live status bar */
+  .status-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 16px;
+    background: rgba(24, 28, 35, 0.9);
+    border-bottom: 1px solid var(--card-border);
+    flex-shrink: 0;
+  }
+
+  .status-banner-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .status-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .status-icon-svg {
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+  }
+
+  .status-text {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .proxy-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 9px;
+    border-radius: 7px;
+    font-size: 11.5px;
+    font-weight: 600;
+    background: rgba(148, 163, 184, 0.12);
+    color: var(--text-secondary);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    transition: all 0.2s;
+  }
+
+  .proxy-badge.active-proxy {
+    background: rgba(56, 189, 248, 0.14);
+    color: var(--accent);
+    border-color: rgba(56, 189, 248, 0.35);
+  }
+
+  .state-ico-img {
+    width: 14px;
+    height: 14px;
+    object-fit: contain;
+  }
+
+  .badge-timestamp {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-muted);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  /* Main 2-column layout */
+  .main-layout {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 12px;
+    padding: 10px 14px 10px 14px;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .col {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 0;
+  }
+
+  /* Card styling */
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    padding: 10px 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .card-title {
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--text-secondary);
+  }
+
+  /* Rules List Table */
+  .rules-table-container {
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    background: rgba(14, 17, 22, 0.65);
+    margin-bottom: 8px;
+    max-height: 105px;
+    overflow-y: auto;
+  }
+
+  /* Scrollbar */
+  .rules-table-container::-webkit-scrollbar {
+    width: 5px;
+  }
+  .rules-table-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.16);
+    border-radius: 3px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+  }
+
+  th {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 6px 10px;
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--card-border);
+  }
+
+  td {
+    padding: 6px 10px;
+    font-size: 12px;
+    color: var(--text-primary);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  }
+
+  tr {
+    cursor: pointer;
+    transition: background 0.12s;
+  }
+
+  tr:hover {
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  tr.selected {
+    background: rgba(56, 189, 248, 0.14);
+  }
+
+  tr.selected td {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .table-empty {
+    text-align: center;
+    padding: 12px;
+    color: var(--text-muted);
+    font-style: italic;
+    font-size: 11.5px;
+  }
+
+  .rules-actions {
+    display: flex;
+    gap: 7px;
+  }
+
+  /* Buttons */
+  button {
+    font-family: inherit;
+    font-size: 11.5px;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    padding: 5px 11px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #0f172a;
+    font-weight: 700;
+    box-shadow: 0 2px 6px var(--accent-glow);
+  }
+
+  .btn-primary:hover {
+    background: #7dd3fc;
+    box-shadow: 0 2px 10px rgba(56, 189, 248, 0.35);
+  }
+
+  .btn-secondary {
+    background: var(--btn-secondary);
+    color: var(--text-primary);
+    border-color: var(--card-border);
+  }
+
+  .btn-secondary:hover {
+    background: var(--btn-secondary-hover);
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+
+  .btn-danger {
+    background: rgba(248, 113, 113, 0.1);
+    color: var(--danger);
+    border-color: rgba(248, 113, 113, 0.2);
+  }
+
+  .btn-danger:hover {
+    background: rgba(248, 113, 113, 0.2);
+  }
+
+  /* Form Elements */
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 7px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .form-label {
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+
+  input[type="text"], select {
+    font-family: inherit;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    padding: 5px 8px;
+    font-size: 12px;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    user-select: text;
+    -webkit-user-select: text;
+  }
+
+  input[type="text"]:focus, select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent-glow);
+  }
+
+  select {
+    cursor: pointer;
+  }
+
+  .form-error {
+    color: var(--danger);
+    font-size: 11px;
+    font-weight: 600;
+    margin-top: 5px;
+    display: none;
+  }
+
+  /* Radio Group */
+  .radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .radio-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--text-secondary);
+    transition: color 0.15s;
+  }
+
+  .radio-row:hover {
+    color: var(--text-primary);
+  }
+
+  .radio-row input[type="radio"] {
+    accent-color: var(--accent);
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+  }
+
+  .inline-input-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+  }
+
+  /* Checkbox Row */
+  .checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 11.5px;
+    color: var(--text-secondary);
+    transition: color 0.15s;
+  }
+
+  .checkbox-row:hover {
+    color: var(--text-primary);
+  }
+
+  .checkbox-row input[type="checkbox"] {
+    accent-color: var(--accent);
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+  }
+
+  /* Action Bar */
+  .action-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-top: auto;
+  }
+
+  .action-bar-left {
+    display: flex;
+    gap: 7px;
+  }
+</style>
+</head>
+<body>
+
+<!-- Titlebar -->
+<div class="titlebar" id="drag-region">
+  <div class="titlebar-left">
+    <div class="app-logo">
+      <img id="app-logo-img" alt="Logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAACk0lEQVR4nO2YwWsTQRjF02pWLJSaSlKwipf+Aa09CKWYgr1IT14LiqhgsXgSpLT/geC9GGjOOQr1EsFrkVLam3gSRHoMgaCNShzfkLfudHY2u+JuZwPz4AfD7jffvreZzG5SKDg5OTk5OTn1VS6XC0KIgVQqFds2TyvOcBx5M34BzIA7YA1skDUem2GN3SAGA1fAQ/AGfAFdEVaX52TNI8452xAG4yWwDo5Az2A6Sj3OWWeP7IMYzC+CZoTxDvhMk0ccdyKCNNkruxBacw88BceamZ9gD2yBKrgOLhM5vsVze6xVdcyeXuohNPPj4KUIr/F9cB9MGj4pnUnW7ms9uuw9nmoIpZlcq6/F6SUjl8UrMG0yG3ETfKY5V11aPV6jpPdII8Cmdse+8k6eizI+oJePnHuPvVRtZhFgW7nAJ7BsMl4sFiOXj+d5UUGW2dPXdhYB5sEueAsWokz+BwvsvctrpR5AcpHEmSnRxAqZF4b93kCof9oB4rgm+q8OH0AL/CAtHttgTeKemUm70Ci4Cw5FvA5ZO3omRhMEkA+f56CtGe3xzrdE+Gnd5py/Dy6bAR6DE8XcL/AOPAA3iBw3ec7XCedaD7CjmJJ3+wWYEOH1PMFzLaV+Jw8B5C7zkawajOusKvUreQgwAq6SpLuLXz+ShwCDuETsbZf/Is3UHHhP5nJnVlWtVjOZP1C+rAd6iHq9btt2oBjzkSFyI8XUrGb+N1FDzOY1wHnQoNE2x99JQwRP6gZrbdsOJILtVP7mlfu7/B/oNvhG5PgJz22x1rbtQMoSku82UxxXlU+gymNTwub7T5S0L7HPkhJgyVSTW9HgTdH/wd7h2Lat5GKAMfCMjA1jgOFZMrqGPoCTk5NTYv0BUvosBj4bOSsAAAAASUVORK5CYII=">
+    </div>
+    <div class="app-title-group">
+      <h1>Wi-Fi Proxy Switcher</h1>
+      <p>Automated network proxy management by SSID</p>
+    </div>
+  </div>
+
+  <div class="titlebar-right">
+    <div class="auto-switch-group">
+      <span class="auto-switch-label">Auto-Switch</span>
+      <label class="switch">
+        <input type="checkbox" id="master-switch">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="win-controls">
+      <button class="win-btn" id="btn-minimize" title="Minimize">
+        <svg width="12" height="12" viewBox="0 0 12 12"><rect y="5" width="12" height="1.5" fill="currentColor"/></svg>
+      </button>
+      <button class="win-btn close" id="btn-close" title="Hide to Tray">
+        <svg width="12" height="12" viewBox="0 0 12 12"><path d="M1 1L11 11M1 11L11 1" stroke="currentColor" stroke-width="1.5"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Compact Live Connection Status Banner -->
+<div class="status-banner">
+  <div class="status-banner-left">
+    <div class="status-item">
+      <div class="status-icon-svg">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12.55a11 11 0 0 1 14.08 0"/>
+          <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
+          <circle cx="12" cy="20" r="1"/>
+        </svg>
+      </div>
+      <span class="status-text" id="status-ssid">Detecting Wi-Fi...</span>
+    </div>
+
+    <div class="status-item">
+      <div class="proxy-badge" id="status-proxy-badge">
+        <img id="status-state-icon" class="state-ico-img" alt="State" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAADpklEQVR4nO2Z20rsMBSGvfQFfID9FN5u2L7Evt+PpeMBUTwhasEj3qioFwpeiKIi4wFGUJCODB7HtfOFZuh02k56GKswC36MadbK/yeTrDTt6ela1zprpVKpUORNvFfhl0K/wu+c0e/F7s0sJCRAn8I/BUehrOAq1HKG68V2vL76UokIIT+gsKVQV5AvQt3rcyCxiIDDX4XKFxIPouJxsBMQMvJFkveLaJoJGwF93hQWTd5gq+RbEzYCWESJf/NDQ0MyODio//L/8PCwRtizhKh7nKwEsI05SYlDdHp6WjY2NuTw8FDOzs6kXC5rUKaOZ7ShbQohjsetrQD24rIt8ZGREVleXpbT01OpVqtSr9clynhGG9rig28CIWWPW1sBJBTXJuji4qJcXFzI6+trJOkowwdfYlgKcD1ubQWQFWtxoz42Nib7+/tSq9UiCX58fGiSgHKUEYNYxGwzGzWPW3oBdDA1NaVH7vPzs4XM8/OzXF1daUKrq6t6dAFl6nhGm6ARi5jEjhGRTQCB5+fnpVKptBB4eXmRk5MTTXZ0dFS3DQPPaENbfIJGbPqIEJFeAAEXFhbk4eGhpdO7uztZWVmx3lnMjoUPvkGjD/oKiZVeACPH9PuNHYWRnJycTLW344MvMYI7F33RZ24CxsfH5f7+vtHB+/u7HBwcNH4uScn7RRCDWMQ0Rl/0mesa2N7elqenJ429vb1Gho0iZjKvyb5xQolFTBOfvnJfxHQyMzOjEUXekCTbrq2taSKAMnX+Nini57ONRhEwu9Tx8bG4rtu091Omjmcxu0y7mcouIAocCXZ2dvT0tzPa0BafhGumMwLIoEdHR7HZNmi0xQffQgUw3bu7uy1Z+e3tTa6vr/UJFFCmzm/44JtgF+vMDJyfnzcRIxGtr683ZWTK1AURIb6Fz8Dm5qY+3zCit7e3Mjc3Fzqq1M3OzsrNzY1OXPjgW/gMsOUtLS3pEZ6YmIglxDPa0BafuFzyZQIMMdvXxQyvlp0TEEc0w3twcQLMQY0MDNIe+AoRYDIyR2UWK6Acl4G/lQAWJrcQQaMu4aJNLcD6pT4MwaO3sYgjchJYv9RbX6uEgTPO5eVliwDqUpx//LC+Vkl8seUHv3PHceTx8bFBnjJ1GdeA9cVW6qtFP8i65n2AcpZYpYRXi7lc7uacBxJf7n636/U/fm6xFhDxsz5whAjo8dT/nE9MESJ+zke+GBFmi/3+n1nDhKidJEpUR9G1rnXY/gMeoMKv1vwOrwAAAABJRU5ErkJggg==">
+        <span id="status-proxy-text">None (Direct connection)</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="badge-timestamp" id="last-switch-time">Last Switch: Never</div>
+</div>
+
+<!-- 2-Column Main Content -->
+<div class="main-layout">
+
+  <!-- Left Column: Configured Rules & Rule Editor -->
+  <div class="col">
+    <!-- Configured Rules Card -->
+    <div class="card" style="flex: 1.1; display: flex; flex-direction: column;">
+      <div class="card-header">
+        <div class="card-title">Configured Rules</div>
+      </div>
+      <div class="rules-table-container" style="flex: 1;">
+        <table id="rules-table">
+          <thead>
+            <tr>
+              <th style="width: 45%;">SSID</th>
+              <th style="width: 55%;">Proxy Server</th>
+            </tr>
+          </thead>
+          <tbody id="rules-tbody">
+            <!-- Populated by JavaScript -->
+          </tbody>
+        </table>
+      </div>
+      <div class="rules-actions">
+        <button class="btn-secondary" id="btn-add-rule">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Rule
+        </button>
+        <button class="btn-secondary" id="btn-edit-rule">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Edit Rule
+        </button>
+        <button class="btn-danger" id="btn-delete-rule">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          Delete Rule
+        </button>
+      </div>
+    </div>
+
+    <!-- Rule Editor Card -->
+    <div class="card" id="card-rule-editor">
+      <div class="card-header">
+        <div class="card-title" id="rule-editor-title">Rule Editor</div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Select SSID</label>
+          <select id="select-ssid">
+            <option value="">-- Discovered Wi-Fi --</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Or Type SSID Manually</label>
+          <input type="text" id="input-ssid" placeholder="Wi-Fi SSID name">
+        </div>
+      </div>
+      <div class="form-row" style="margin-bottom: 0;">
+        <div class="form-group" style="flex: 1;">
+          <label class="form-label">Proxy Server</label>
+          <input type="text" id="input-proxy" placeholder="e.g. 10.0.0.1:8080 or proxy.corp:8080">
+        </div>
+        <div style="display: flex; align-items: flex-end; gap: 6px;">
+          <button class="btn-primary" id="btn-save-rule">Save</button>
+          <button class="btn-secondary" id="btn-cancel-rule">Cancel</button>
+        </div>
+      </div>
+      <div class="form-error" id="form-error-msg"></div>
+    </div>
+  </div>
+
+  <!-- Right Column: Fallback, Settings & Actions -->
+  <div class="col">
+    <!-- Fallback Action Card -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Fallback (Unmatched / Disconnected)</div>
+      </div>
+      <div class="radio-group">
+        <label class="radio-row">
+          <input type="radio" name="unmatched" value="disable" id="rad-disable">
+          <span>Disable proxy (Recommended)</span>
+        </label>
+        <label class="radio-row">
+          <input type="radio" name="unmatched" value="keep" id="rad-keep">
+          <span>Keep current proxy unchanged</span>
+        </label>
+        <div class="radio-row">
+          <input type="radio" name="unmatched" value="default" id="rad-default">
+          <div class="inline-input-group">
+            <span>Default:</span>
+            <input type="text" id="input-default-proxy" placeholder="host:port (e.g. 192.168.1.1:8080)" style="flex: 1; padding: 3px 6px;">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- System Preferences Card -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Preferences & Automation</div>
+      </div>
+      <div class="checkbox-group">
+        <label class="checkbox-row">
+          <input type="checkbox" id="chk-auto-switch-events">
+          <span>Auto-switch on Wi-Fi network events</span>
+        </label>
+        <label class="checkbox-row">
+          <input type="checkbox" id="chk-autostart">
+          <span>Launch with Windows (silently in tray)</span>
+        </label>
+        <label class="checkbox-row">
+          <input type="checkbox" id="chk-notify">
+          <span>Show desktop notification banners</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Action Bar -->
+    <div class="action-bar">
+      <div class="action-bar-left">
+        <button class="btn-primary" id="btn-apply-now">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Apply Now
+        </button>
+        <button class="btn-secondary" id="btn-clear-proxy">Clear Proxy</button>
+      </div>
+      <button class="btn-secondary" id="btn-open-log">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Logs
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const ENABLE_ICON_URI = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAEb0lEQVR4nO1ZWU9TQRTmkT/AD/BX8GoiLyKlbIKKRjHgRiKKGGNCRBY18VHRuBBfXB6MYa3sm7LjFgVJVNSWKAUkSoESltbjfMO9eHt7b3uXLpBwki+Zzp2zfL0z58zMjYnZlm0JryTVpKyjNuV/O4IwH7gvYhl2MMQz7Awx4gXbsaaJKBiIY8hlsDHYGVwM7hDDJdi2Cb7iDJFQCD6BoYfBy0ARglfwmaCbhExhP4MzgoHL4RRi0EZA4Z+PZvBSEj5vQguBOOEVRjt4ET1JkjWhhQAWke45v6faSrurLZRYncx/W2vTONBGH55hjAECXiGmGIsGAkhjNj0OEJylNpWOtuRR+eBVejT2hFrt7dT3s58DbfRVsGcYg7EiSR2wCbEFJYBcbNcaeEpdBl3sKabm7y00ueikNe8aqQmeYUzz91auA10dROxCbEEJoKC4Ak6VGivHma5z1DXRTe5Vt2rQagId6MKGaC8IAZcQW1ACqIruQP96RsM+uj/ygGaXZlUDXPWu0iILEkBbTWCjitmCzSBvwy3EZpwAHOQ051In++c8f71+wbhWXDQ4OcQDutRXSme7izjQBmE8wxi5wBZswnYAEuYIwHB+RwGN/Br1C2BhdYEavzWxYM9Tat1enm3EbCRmHwDPQOg5G7uwsuBnB7bhQ4WEcQJIfQWdhTT+56uf09HZj1TcW0LJLF1qWZAYg7HQga5c4AO+FNKtcQJp9Zk06Bz2cbTm9bB/vZkONeUYSYlcB7qwAVtSgS/4DAkBZIcsWzZ9/v1lw8GyZ5kejj3mThKNFSaBhJXbgC3YFAW+4FOWmcytgRtvb9GMe4amGe5+qGIVNl019YkVWQq1CgwbsAWbsA0f8BXyRZzMqmdu6wkOVFKl4HlFrlmvyCX9ZSyQSh4M2rwC1yhXYNiySOzDV8gJiK9cacqIhSi/4zTVjzewajvpk/vRRgWuH7fxLKNWuNTsh4yA2hTAluDmu9s05Z72yypywRiMhY6G6hteAgggvT6Lnn56Rice9WorlxX2RqADXR0kQk8A8/nO+3vklVXlpbUlGnK+4jtQYIilRfRJBTrQ1ZGCwzOF2h2dPoGhEJUNVPCqK1ZitEtZn7wQQjeqUwjBXRu+TnPLc2w/46HXU2/oeNspnjblY9GHZxiDsXPLLq4b9TeAbUEh2wOVDVyh7MbDAQPCM4zBWOgkC6e1qBIQA+PFSsOCxBjpsXNTEAgUqFZim4oAtg0HG4/Q5f5yDrQNHuYjTwCVFBUZW2WcgQG00Wdm4xcxAliYbY4Ov+KFPp2L1jCBoId61anD5nqm7YDP1lsU9OGZifWg+VCv+VpFCda6dHr5o9ePAPrwzMQb0HytovtiSwqkx6IXF8gx79gI3jE/wfuMnNwk0HyxZfhqUTqV8lpPCueBSjrG2iZT6cbVolYCpi93EyWnMpPZh5IMXO5utuv1XdLYAoqMxNb6wKFAIEZgv3U+MamQ2Dof+QKQEFPs5v/MqkTEokwo7NiWbQmz/AMlAHZgAUO/1wAAAABJRU5ErkJggg==";
+  const DISABLE_ICON_URI = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAADpklEQVR4nO2Z20rsMBSGvfQFfID9FN5u2L7Evt+PpeMBUTwhasEj3qioFwpeiKIi4wFGUJCODB7HtfOFZuh02k56GKswC36MadbK/yeTrDTt6ela1zprpVKpUORNvFfhl0K/wu+c0e/F7s0sJCRAn8I/BUehrOAq1HKG68V2vL76UokIIT+gsKVQV5AvQt3rcyCxiIDDX4XKFxIPouJxsBMQMvJFkveLaJoJGwF93hQWTd5gq+RbEzYCWESJf/NDQ0MyODio//L/8PCwRtizhKh7nKwEsI05SYlDdHp6WjY2NuTw8FDOzs6kXC5rUKaOZ7ShbQohjsetrQD24rIt8ZGREVleXpbT01OpVqtSr9clynhGG9rig28CIWWPW1sBJBTXJuji4qJcXFzI6+trJOkowwdfYlgKcD1ubQWQFWtxoz42Nib7+/tSq9UiCX58fGiSgHKUEYNYxGwzGzWPW3oBdDA1NaVH7vPzs4XM8/OzXF1daUKrq6t6dAFl6nhGm6ARi5jEjhGRTQCB5+fnpVKptBB4eXmRk5MTTXZ0dFS3DQPPaENbfIJGbPqIEJFeAAEXFhbk4eGhpdO7uztZWVmx3lnMjoUPvkGjD/oKiZVeACPH9PuNHYWRnJycTLW344MvMYI7F33RZ24CxsfH5f7+vtHB+/u7HBwcNH4uScn7RRCDWMQ0Rl/0mesa2N7elqenJ429vb1Gho0iZjKvyb5xQolFTBOfvnJfxHQyMzOjEUXekCTbrq2taSKAMnX+Nini57ONRhEwu9Tx8bG4rtu091Omjmcxu0y7mcouIAocCXZ2dvT0tzPa0BafhGumMwLIoEdHR7HZNmi0xQffQgUw3bu7uy1Z+e3tTa6vr/UJFFCmzm/44JtgF+vMDJyfnzcRIxGtr683ZWTK1AURIb6Fz8Dm5qY+3zCit7e3Mjc3Fzqq1M3OzsrNzY1OXPjgW/gMsOUtLS3pEZ6YmIglxDPa0BafuFzyZQIMMdvXxQyvlp0TEEc0w3twcQLMQY0MDNIe+AoRYDIyR2UWK6Acl4G/lQAWJrcQQaMu4aJNLcD6pT4MwaO3sYgjchJYv9RbX6uEgTPO5eVliwDqUpx//LC+Vkl8seUHv3PHceTx8bFBnjJ1GdeA9cVW6qtFP8i65n2AcpZYpYRXi7lc7uacBxJf7n636/U/fm6xFhDxsz5whAjo8dT/nE9MESJ+zke+GBFmi/3+n1nDhKidJEpUR9G1rnXY/gMeoMKv1vwOrwAAAABJRU5ErkJggg==";
+
+  let state = null;
+  let selectedRuleIndex = null;
+  let editingRuleIndex = null;
+
+  // Window drag handler
+  document.getElementById('drag-region').addEventListener('mousedown', (e) => {
+    if (!e.target.closest('button') && !e.target.closest('input') && !e.target.closest('label')) {
+      sendIpc('drag_window');
+    }
+  });
+
+  document.getElementById('btn-minimize').addEventListener('click', () => sendIpc('minimize'));
+  document.getElementById('btn-close').addEventListener('click', () => sendIpc('close'));
+
+  function sendIpc(cmd, payload = {}) {
+    if (window.ipc) {
+      window.ipc.postMessage(JSON.stringify({ cmd, ...payload }));
+    }
+  }
+
+  // Called from Rust via evaluate_script
+  window.__renderState = function(newState) {
+    state = newState;
+    render();
+  };
+
+  function render() {
+    if (!state) return;
+
+    // Master Switch
+    document.getElementById('master-switch').checked = !!state.enabled;
+    document.getElementById('chk-auto-switch-events').checked = !!state.enabled;
+
+    // Last Switch
+    document.getElementById('last-switch-time').innerText = 'Last Switch: ' + (state.last_switch_time || 'Never');
+
+    // Status SSID
+    const ssidText = state.current_ssid ? state.current_ssid + ' (Connected)' : (state.ssid_status || 'Not connected');
+    document.getElementById('status-ssid').innerText = ssidText;
+
+    // Status Proxy & State Icon (enable.ico vs disable.ico)
+    const proxyBadge = document.getElementById('status-proxy-badge');
+    const proxyText = document.getElementById('status-proxy-text');
+    const stateIcon = document.getElementById('status-state-icon');
+
+    const isEnabled = (state.active_proxy && state.active_proxy !== 'None') || (state.is_proxy_active);
+    if (isEnabled) {
+      proxyBadge.className = 'proxy-badge active-proxy';
+      proxyText.innerText = state.active_proxy && state.active_proxy !== 'None' ? state.active_proxy : 'Proxy Active';
+      stateIcon.src = ENABLE_ICON_URI;
+      stateIcon.title = "Proxy Enabled";
+    } else {
+      proxyBadge.className = 'proxy-badge';
+      proxyText.innerText = 'None (Direct connection)';
+      stateIcon.src = DISABLE_ICON_URI;
+      stateIcon.title = "Proxy Disabled";
+    }
+
+    // Rules Table
+    const tbody = document.getElementById('rules-tbody');
+    tbody.innerHTML = '';
+    if (!state.rules || state.rules.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="2" class="table-empty">No rules defined. Click "Add Rule" below.</td></tr>';
+    } else {
+      state.rules.forEach((rule, idx) => {
+        const tr = document.createElement('tr');
+        if (selectedRuleIndex === idx) tr.className = 'selected';
+        tr.innerHTML = `<td>${escapeHtml(rule.ssid)}</td><td>${escapeHtml(rule.proxy)}</td>`;
+        tr.addEventListener('click', () => {
+          selectedRuleIndex = (selectedRuleIndex === idx) ? null : idx;
+          render();
+        });
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Network select combo
+    const select = document.getElementById('select-ssid');
+    const curVal = select.value;
+    select.innerHTML = '<option value="">-- Discovered Wi-Fi --</option>';
+    if (state.network_list) {
+      state.network_list.forEach(net => {
+        const opt = document.createElement('option');
+        opt.value = net;
+        opt.innerText = net;
+        if (net === curVal) opt.selected = true;
+        select.appendChild(opt);
+      });
+    }
+
+    // Fallback Radios
+    document.getElementById('rad-disable').checked = (state.unmatched === 'disable');
+    document.getElementById('rad-keep').checked = (state.unmatched === 'keep');
+    document.getElementById('rad-default').checked = (state.unmatched === 'default');
+    document.getElementById('input-default-proxy').value = state.default_proxy || '';
+    document.getElementById('input-default-proxy').disabled = (state.unmatched !== 'default');
+
+    // Preferences Checkboxes
+    document.getElementById('chk-autostart').checked = !!state.start_with_windows;
+    document.getElementById('chk-notify').checked = !!state.notify;
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  // Event Listeners
+  document.getElementById('master-switch').addEventListener('change', (e) => {
+    sendIpc('toggle_master', { enabled: e.target.checked });
+  });
+
+  document.getElementById('chk-auto-switch-events').addEventListener('change', (e) => {
+    sendIpc('toggle_master', { enabled: e.target.checked });
+  });
+
+  document.getElementById('select-ssid').addEventListener('change', (e) => {
+    if (e.target.value) {
+      document.getElementById('input-ssid').value = e.target.value;
+    }
+  });
+
+  document.getElementById('btn-add-rule').addEventListener('click', () => {
+    editingRuleIndex = null;
+    document.getElementById('rule-editor-title').innerText = 'Rule Editor (Add New)';
+    document.getElementById('input-ssid').value = '';
+    document.getElementById('input-proxy').value = '';
+    hideError();
+    document.getElementById('input-ssid').focus();
+  });
+
+  document.getElementById('btn-edit-rule').addEventListener('click', () => {
+    if (selectedRuleIndex === null || !state.rules[selectedRuleIndex]) {
+      showError('Please select a rule from the table to edit.');
+      return;
+    }
+    editingRuleIndex = selectedRuleIndex;
+    const rule = state.rules[editingRuleIndex];
+    document.getElementById('rule-editor-title').innerText = `Rule Editor (#${editingRuleIndex + 1})`;
+    document.getElementById('input-ssid').value = rule.ssid;
+    document.getElementById('input-proxy').value = rule.proxy;
+    document.getElementById('select-ssid').value = rule.ssid;
+    hideError();
+  });
+
+  document.getElementById('btn-cancel-rule').addEventListener('click', () => {
+    editingRuleIndex = null;
+    document.getElementById('rule-editor-title').innerText = 'Rule Editor';
+    document.getElementById('input-ssid').value = '';
+    document.getElementById('input-proxy').value = '';
+    hideError();
+  });
+
+  document.getElementById('btn-save-rule').addEventListener('click', () => {
+    const ssid = document.getElementById('input-ssid').value.trim();
+    const proxy = document.getElementById('input-proxy').value.trim();
+
+    if (!ssid) {
+      showError('SSID cannot be empty.');
+      return;
+    }
+    if (!proxy) {
+      showError('Proxy address cannot be empty.');
+      return;
+    }
+
+    sendIpc('save_rule', {
+      index: editingRuleIndex,
+      ssid,
+      proxy
+    });
+  });
+
+  document.getElementById('btn-delete-rule').addEventListener('click', () => {
+    if (selectedRuleIndex === null) {
+      showError('Please select a rule from the table to delete.');
+      return;
+    }
+    sendIpc('delete_rule', { index: selectedRuleIndex });
+    selectedRuleIndex = null;
+  });
+
+  ['rad-disable', 'rad-keep', 'rad-default'].forEach(id => {
+    document.getElementById(id).addEventListener('change', updateUnmatched);
+  });
+  document.getElementById('input-default-proxy').addEventListener('change', updateUnmatched);
+
+  function updateUnmatched() {
+    let val = 'disable';
+    if (document.getElementById('rad-keep').checked) val = 'keep';
+    if (document.getElementById('rad-default').checked) val = 'default';
+    const defProxy = document.getElementById('input-default-proxy').value.trim();
+    document.getElementById('input-default-proxy').disabled = (val !== 'default');
+    sendIpc('set_unmatched', { unmatched: val, default_proxy: defProxy });
+  }
+
+  document.getElementById('btn-apply-now').addEventListener('click', () => sendIpc('apply_now'));
+  document.getElementById('btn-clear-proxy').addEventListener('click', () => sendIpc('clear_proxy'));
+  document.getElementById('btn-open-log').addEventListener('click', () => sendIpc('open_log'));
+
+  document.getElementById('chk-autostart').addEventListener('change', (e) => {
+    sendIpc('toggle_autostart', { enabled: e.target.checked });
+  });
+
+  document.getElementById('chk-notify').addEventListener('change', (e) => {
+    sendIpc('toggle_notify', { enabled: e.target.checked });
+  });
+
+  function showError(msg) {
+    const el = document.getElementById('form-error-msg');
+    el.innerText = '⚠ ' + msg;
+    el.style.display = 'block';
+  }
+
+  function hideError() {
+    const el = document.getElementById('form-error-msg');
+    el.style.display = 'none';
+  }
+
+  // Request initial state on load
+  window.addEventListener('DOMContentLoaded', () => {
+    sendIpc('init');
+  });
+</script>
+</body>
+</html>

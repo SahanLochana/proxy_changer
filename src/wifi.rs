@@ -21,6 +21,7 @@ pub enum SsidStatus {
 
 pub struct WlanClient {
     handle: HANDLE,
+    callback_ctx: Option<*mut Box<dyn Fn() + Send + Sync>>,
 }
 
 impl WlanClient {
@@ -32,7 +33,10 @@ impl WlanClient {
             if res != 0 {
                 return Err(format!("WlanOpenHandle failed with error code: {}", res));
             }
-            Ok(Self { handle })
+            Ok(Self {
+                handle,
+                callback_ctx: None,
+            })
         }
     }
 
@@ -190,7 +194,16 @@ impl WlanClient {
         set.into_iter().collect()
     }
 
-    pub fn register_notification(&self, context: *const c_void) -> Result<(), String> {
+    pub fn register_notification<F>(&mut self, callback: F) -> Result<(), String>
+    where
+        F: Fn() + Send + Sync + 'static,
+    {
+        self.unregister_notification();
+
+        let boxed: Box<Box<dyn Fn() + Send + Sync>> = Box::new(Box::new(callback));
+        let ptr = Box::into_raw(boxed);
+        self.callback_ctx = Some(ptr);
+
         unsafe {
             let mut prev_source = 0u32;
             let res = WlanRegisterNotification(
@@ -198,7 +211,7 @@ impl WlanClient {
                 WLAN_NOTIFICATION_SOURCE_ACM,
                 false,
                 Some(wlan_notification_callback),
-                Some(context),
+                Some(ptr as *const c_void),
                 None,
                 Some(&mut prev_source),
             );
@@ -209,7 +222,7 @@ impl WlanClient {
         }
     }
 
-    pub fn unregister_notification(&self) {
+    pub fn unregister_notification(&mut self) {
         unsafe {
             let mut prev_source = 0u32;
             let _ = WlanRegisterNotification(
@@ -221,6 +234,11 @@ impl WlanClient {
                 None,
                 Some(&mut prev_source),
             );
+        }
+        if let Some(ptr) = self.callback_ctx.take() {
+            unsafe {
+                drop(Box::from_raw(ptr));
+            }
         }
     }
 }
@@ -241,10 +259,8 @@ unsafe extern "system" fn wlan_notification_callback(
     context: *mut c_void,
 ) {
     if !context.is_null() {
-        unsafe {
-            let sender = &*(context as *const native_windows_gui::NoticeSender);
-            sender.notice();
-        }
+        let cb = unsafe { &*(context as *mut Box<dyn Fn() + Send + Sync>) };
+        cb();
     }
 }
 

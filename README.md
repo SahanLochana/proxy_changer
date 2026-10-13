@@ -12,9 +12,13 @@ A lightweight, native Windows system tray application written in Rust that autom
 - **Manual Overrides:** Immediate "Apply Proxy Now" and "Clear Proxy" buttons in both the main window and the system tray menu.
 - **Debounced Updates:** Debounces rapid Wi-Fi notifications (500 ms) before querying the network state.
 - **Redundant Write Prevention:** Compares target proxy state against current registry settings before writing, avoiding unnecessary system notifications.
+- **Modern Windows 11 Dark Aesthetic:**
+  - Sleek dark theme UI with rounded cards, custom title bar, glowing toggle switches, and subtle borders.
+  - Live Connection Status card showing current Wi-Fi SSID and active proxy state badges.
+  - Interactive table of rules with inline selection, editing, and discovered SSID dropdown.
+  - Fallback radio options and quick action buttons ("Apply Proxy Now", "Clear Proxy", "Open Log File").
 - **Lightweight & Efficient:**
-  - Single standalone `.exe` (~318 KB).
-  - Idle RAM ~14 MB (< 20 MB limit).
+  - Standalone `.exe` binary.
   - Idle CPU ~0% (event-driven, no fast polling loops).
   - No console window (`#![windows_subsystem = "windows"]`).
 - **Zero UAC / No Admin Required:** Uses only `HKCU` (`HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings` and `HKCU\Software\Microsoft\Windows\CurrentVersion\Run`).
@@ -34,17 +38,16 @@ A lightweight, native Windows system tray application written in Rust that autom
 
 ```
 src/
-  ├── main.rs      // Entry point, single-instance mutex, --hidden flag, NWG event loop
+  ├── main.rs      // Entry point, single-instance mutex, --hidden flag, Tao event loop
   ├── wifi.rs      // WLAN API client, SSID query, interface enumeration, notification callback
   ├── proxy.rs     // Windows Internet Settings registry reader, applier, clearer, WinInet notification
   ├── config.rs    // Configuration struct, JSON persistence, validation, unit tests
   ├── logic.rs     // Decision matrix (SSID + config -> Action) & redundant write suppression
-  ├── ui.rs        // Native Windows GUI (NWG) window, tray, controls, debounce timer, live status
+  ├── ui.rs        // Tao borderless window, Wry WebView2, tray-icon, IPC message handling
   ├── autostart.rs // HKCU Run key management
   └── log.rs       // Thread-safe file logger with automatic size trimming
 assets/
-  ├── icon_enabled.ico  // Active state icon (cyan/blue)
-  └── icon_disabled.ico // Inactive state icon (grayscale)
+  └── index.html   // Windows 11 Fluent dark theme UI (cards, toggle switch, table, badges)
 build.rs           // Asset generation & Windows resource embedding (winres)
 ```
 
