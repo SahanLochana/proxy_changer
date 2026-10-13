@@ -68,17 +68,19 @@
   }
 
   .app-logo {
-    width: 26px;
-    height: 26px;
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: visible;
+    flex-shrink: 0;
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
   }
 
   .app-logo img {
-    width: 24px;
-    height: 24px;
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    display: block;
     object-fit: contain;
   }
 
@@ -248,8 +250,10 @@
   }
 
   .state-ico-img {
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    display: block;
     object-fit: contain;
   }
 
