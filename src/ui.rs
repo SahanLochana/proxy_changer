@@ -335,6 +335,7 @@ fn handle_ipc_message(
     match cmd {
         "init" => {
             push_state_to_webview(state, webview);
+            push_logs_to_webview(webview);
         }
         "drag_window" => {
             let _ = window.drag_window();
@@ -415,7 +416,18 @@ fn handle_ipc_message(
         "clear_proxy" => {
             manual_clear(state, webview, tray_icon, icon_enabled, icon_disabled, item_auto);
         }
-        "open_log" => {
+        "get_logs" => {
+            push_logs_to_webview(webview);
+        }
+        "clear_logs" => {
+            if let Err(e) = crate::log::clear_logs() {
+                log_error!("Failed to clear logs: {}", e);
+            } else {
+                log_info!("Logs cleared by user");
+            }
+            push_logs_to_webview(webview);
+        }
+        "open_log" | "open_log_file" => {
             let p = log_path();
             if !p.exists() {
                 let _ = std::fs::File::create(&p);
@@ -609,6 +621,15 @@ fn update_tray_and_ui(
     let _ = tray_icon.set_tooltip(Some(tip));
 
     push_state_to_webview(state, webview);
+    push_logs_to_webview(webview);
+}
+
+fn push_logs_to_webview(webview: &wry::WebView) {
+    let entries = crate::log::read_logs();
+    if let Ok(json_val) = serde_json::to_string(&entries) {
+        let script = format!("if (window.__renderLogs) {{ window.__renderLogs({}); }}", json_val);
+        let _ = webview.evaluate_script(&script);
+    }
 }
 
 fn push_state_to_webview(state: &UiState, webview: &wry::WebView) {

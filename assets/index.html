@@ -555,6 +555,355 @@
     display: flex;
     gap: 7px;
   }
+
+  .btn-sm {
+    padding: 3px 8px;
+    font-size: 11px;
+    gap: 4px;
+    height: 24px;
+  }
+
+  /* Navigation Segmented Tabs */
+  .nav-segmented {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 2px;
+    gap: 2px;
+  }
+
+  .nav-segment {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 9px;
+    border-radius: 6px;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .nav-segment:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .nav-segment.active {
+    background: var(--btn-secondary);
+    color: var(--accent);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+
+  .nav-badge {
+    display: inline-block;
+    padding: 1px 5px;
+    font-size: 9.5px;
+    font-weight: 700;
+    border-radius: 10px;
+    background: rgba(56, 189, 248, 0.15);
+    color: var(--accent);
+  }
+
+  /* In-App Logs Page Layout */
+  .logs-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px 14px 10px 14px;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .logs-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .logs-toolbar-left, .logs-toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .logs-filter-group {
+    display: flex;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    padding: 2px;
+    gap: 2px;
+  }
+
+  .filter-chip {
+    padding: 2px 7px;
+    border-radius: 4px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .filter-chip:hover {
+    color: var(--text-primary);
+  }
+
+  .filter-chip.active {
+    background: var(--btn-secondary);
+    color: var(--text-primary);
+  }
+
+  .filter-chip.chip-info.active {
+    color: #38bdf8;
+    background: rgba(56, 189, 248, 0.18);
+  }
+
+  .filter-chip.chip-warn.active {
+    color: #fbbf24;
+    background: rgba(251, 191, 36, 0.18);
+  }
+
+  .filter-chip.chip-error.active {
+    color: #f87171;
+    background: rgba(248, 113, 113, 0.18);
+  }
+
+  .chip-count {
+    font-size: 10px;
+    opacity: 0.85;
+  }
+
+  .logs-search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .logs-search-box svg {
+    position: absolute;
+    left: 8px;
+    color: var(--text-muted);
+    pointer-events: none;
+  }
+
+  .logs-search-box input {
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 6px;
+    padding: 4px 22px 4px 24px;
+    color: var(--text-primary);
+    font-size: 11px;
+    width: 140px;
+    transition: border-color 0.15s, width 0.2s;
+  }
+
+  .logs-search-box input:focus {
+    border-color: var(--card-border-focus);
+    width: 180px;
+    outline: none;
+  }
+
+  .logs-search-clear {
+    position: absolute;
+    right: 6px;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 13px;
+    line-height: 1;
+    padding: 0;
+  }
+
+  .logs-search-clear:hover {
+    color: var(--text-primary);
+  }
+
+  .logs-autoscroll-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    margin-right: 2px;
+  }
+
+  .logs-autoscroll-label input {
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+
+  .logs-console-card {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    background: #0d0f14;
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.45);
+  }
+
+  .logs-table-header {
+    display: flex;
+    align-items: center;
+    padding: 6px 12px;
+    background: rgba(22, 26, 33, 0.98);
+    border-bottom: 1px solid var(--card-border);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  .col-time {
+    width: 135px;
+    flex-shrink: 0;
+  }
+
+  .col-level {
+    width: 65px;
+    flex-shrink: 0;
+  }
+
+  .col-msg {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .logs-entries-container {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    font-family: "Consolas", "Cascadia Code", "Courier New", monospace;
+    font-size: 11px;
+    line-height: 1.45;
+    padding: 4px 0;
+    user-select: text;
+    -webkit-user-select: text;
+  }
+
+  .log-row {
+    display: flex;
+    align-items: flex-start;
+    padding: 3px 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+    transition: background 0.1s;
+  }
+
+  .log-row:hover {
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  .log-row .log-time {
+    width: 135px;
+    flex-shrink: 0;
+    color: var(--text-muted);
+    font-size: 10.5px;
+    white-space: nowrap;
+  }
+
+  .log-row .log-level {
+    width: 65px;
+    flex-shrink: 0;
+  }
+
+  .log-badge {
+    display: inline-block;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    text-align: center;
+  }
+
+  .log-badge.level-info {
+    background: rgba(56, 189, 248, 0.14);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.25);
+  }
+
+  .log-badge.level-warn {
+    background: rgba(251, 191, 36, 0.14);
+    color: #fbbf24;
+    border: 1px solid rgba(251, 191, 36, 0.25);
+  }
+
+  .log-badge.level-error {
+    background: rgba(248, 113, 113, 0.14);
+    color: #f87171;
+    border: 1px solid rgba(248, 113, 113, 0.25);
+  }
+
+  .log-row .log-msg {
+    flex: 1;
+    min-width: 0;
+    word-break: break-word;
+    color: #cbd5e1;
+  }
+
+  .log-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    min-height: 180px;
+    color: var(--text-muted);
+    gap: 8px;
+    padding: 30px;
+    text-align: center;
+  }
+
+  .log-empty-icon {
+    opacity: 0.5;
+  }
+
+  .logs-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 4px;
+    font-size: 10.5px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  .logs-meta-left {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .logs-meta-dot {
+    opacity: 0.5;
+  }
+
+  .logs-file-path {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-family: monospace;
+  }
 </style>
 </head>
 <body>
@@ -569,6 +918,18 @@
       <h1>Wi-Fi Proxy Switcher</h1>
       <p>Automated network proxy management by SSID</p>
     </div>
+  </div>
+
+  <div class="nav-segmented" id="main-nav-tabs">
+    <button class="nav-segment active" id="tab-dashboard" title="Dashboard & Rules">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+      <span>Rules</span>
+    </button>
+    <button class="nav-segment" id="tab-logs" title="Activity Logs">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      <span>Logs</span>
+      <span class="nav-badge" id="logs-total-badge">0</span>
+    </button>
   </div>
 
   <div class="titlebar-right">
@@ -616,7 +977,7 @@
 </div>
 
 <!-- 2-Column Main Content -->
-<div class="main-layout">
+<div class="main-layout" id="view-dashboard">
 
   <!-- Left Column: Configured Rules & Rule Editor -->
   <div class="col">
@@ -750,6 +1111,82 @@
 
 </div>
 
+<!-- View 2: Logs Page Layout -->
+<div class="logs-layout" id="view-logs" style="display: none;">
+  <!-- Logs Toolbar -->
+  <div class="logs-toolbar">
+    <div class="logs-toolbar-left">
+      <button class="btn-secondary btn-sm" id="btn-back-dashboard">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        Rules
+      </button>
+
+      <div class="logs-filter-group">
+        <button class="filter-chip active" data-level="all" id="chip-all">All <span class="chip-count" id="chip-all-count">0</span></button>
+        <button class="filter-chip chip-info" data-level="info" id="chip-info">INFO <span class="chip-count" id="chip-info-count">0</span></button>
+        <button class="filter-chip chip-warn" data-level="warn" id="chip-warn">WARN <span class="chip-count" id="chip-warn-count">0</span></button>
+        <button class="filter-chip chip-error" data-level="error" id="chip-error">ERROR <span class="chip-count" id="chip-error-count">0</span></button>
+      </div>
+
+      <div class="logs-search-box">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="input-log-search" placeholder="Search logs...">
+        <button class="logs-search-clear" id="btn-clear-search" style="display: none;">&times;</button>
+      </div>
+    </div>
+
+    <div class="logs-toolbar-right">
+      <label class="logs-autoscroll-label">
+        <input type="checkbox" id="chk-log-autoscroll" checked>
+        <span>Auto-scroll</span>
+      </label>
+      <button class="btn-secondary btn-sm" id="btn-refresh-logs" title="Reload logs">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        Refresh
+      </button>
+      <button class="btn-danger btn-sm" id="btn-clear-logs" title="Clear log file">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        Clear
+      </button>
+      <button class="btn-secondary btn-sm" id="btn-open-file-log" title="Open log file in Notepad">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Notepad
+      </button>
+    </div>
+  </div>
+
+  <!-- Logs Console Card -->
+  <div class="logs-console-card">
+    <div class="logs-table-header">
+      <div class="col-time">TIMESTAMP</div>
+      <div class="col-level">LEVEL</div>
+      <div class="col-msg">LOG DETAILS & MESSAGE</div>
+    </div>
+    <div class="logs-entries-container" id="logs-container">
+      <div class="log-empty-state">
+        <svg class="log-empty-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <div>Loading activity logs...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Logs Footer / Meta Info -->
+  <div class="logs-footer">
+    <div class="logs-meta-left">
+      <span id="logs-status-text">Showing 0 entries</span>
+      <span class="logs-meta-dot">•</span>
+      <span class="logs-file-path" title="Stored in AppData">app.log</span>
+    </div>
+    <div class="logs-meta-right">
+      <span>Auto-trimmed at 512 KB</span>
+    </div>
+  </div>
+</div>
+
 <script>
   const ENABLE_ICON_URI = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAEb0lEQVR4nO1ZWU9TQRTmkT/AD/BX8GoiLyKlbIKKRjHgRiKKGGNCRBY18VHRuBBfXB6MYa3sm7LjFgVJVNSWKAUkSoESltbjfMO9eHt7b3uXLpBwki+Zzp2zfL0z58zMjYnZlm0JryTVpKyjNuV/O4IwH7gvYhl2MMQz7Awx4gXbsaaJKBiIY8hlsDHYGVwM7hDDJdi2Cb7iDJFQCD6BoYfBy0ARglfwmaCbhExhP4MzgoHL4RRi0EZA4Z+PZvBSEj5vQguBOOEVRjt4ET1JkjWhhQAWke45v6faSrurLZRYncx/W2vTONBGH55hjAECXiGmGIsGAkhjNj0OEJylNpWOtuRR+eBVejT2hFrt7dT3s58DbfRVsGcYg7EiSR2wCbEFJYBcbNcaeEpdBl3sKabm7y00ueikNe8aqQmeYUzz91auA10dROxCbEEJoKC4Ak6VGivHma5z1DXRTe5Vt2rQagId6MKGaC8IAZcQW1ACqIruQP96RsM+uj/ygGaXZlUDXPWu0iILEkBbTWCjitmCzSBvwy3EZpwAHOQ051In++c8f71+wbhWXDQ4OcQDutRXSme7izjQBmE8wxi5wBZswnYAEuYIwHB+RwGN/Br1C2BhdYEavzWxYM9Tat1enm3EbCRmHwDPQOg5G7uwsuBnB7bhQ4WEcQJIfQWdhTT+56uf09HZj1TcW0LJLF1qWZAYg7HQga5c4AO+FNKtcQJp9Zk06Bz2cbTm9bB/vZkONeUYSYlcB7qwAVtSgS/4DAkBZIcsWzZ9/v1lw8GyZ5kejj3mThKNFSaBhJXbgC3YFAW+4FOWmcytgRtvb9GMe4amGe5+qGIVNl019YkVWQq1CgwbsAWbsA0f8BXyRZzMqmdu6wkOVFKl4HlFrlmvyCX9ZSyQSh4M2rwC1yhXYNiySOzDV8gJiK9cacqIhSi/4zTVjzewajvpk/vRRgWuH7fxLKNWuNTsh4yA2hTAluDmu9s05Z72yypywRiMhY6G6hteAgggvT6Lnn56Rice9WorlxX2RqADXR0kQk8A8/nO+3vklVXlpbUlGnK+4jtQYIilRfRJBTrQ1ZGCwzOF2h2dPoGhEJUNVPCqK1ZitEtZn7wQQjeqUwjBXRu+TnPLc2w/46HXU2/oeNspnjblY9GHZxiDsXPLLq4b9TeAbUEh2wOVDVyh7MbDAQPCM4zBWOgkC6e1qBIQA+PFSsOCxBjpsXNTEAgUqFZim4oAtg0HG4/Q5f5yDrQNHuYjTwCVFBUZW2WcgQG00Wdm4xcxAliYbY4Ov+KFPp2L1jCBoId61anD5nqm7YDP1lsU9OGZifWg+VCv+VpFCda6dHr5o9ePAPrwzMQb0HytovtiSwqkx6IXF8gx79gI3jE/wfuMnNwk0HyxZfhqUTqV8lpPCueBSjrG2iZT6cbVolYCpi93EyWnMpPZh5IMXO5utuv1XdLYAoqMxNb6wKFAIEZgv3U+MamQ2Dof+QKQEFPs5v/MqkTEokwo7NiWbQmz/AMlAHZgAUO/1wAAAABJRU5ErkJggg==";
   const DISABLE_ICON_URI = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAADpklEQVR4nO2Z20rsMBSGvfQFfID9FN5u2L7Evt+PpeMBUTwhasEj3qioFwpeiKIi4wFGUJCODB7HtfOFZuh02k56GKswC36MadbK/yeTrDTt6ela1zprpVKpUORNvFfhl0K/wu+c0e/F7s0sJCRAn8I/BUehrOAq1HKG68V2vL76UokIIT+gsKVQV5AvQt3rcyCxiIDDX4XKFxIPouJxsBMQMvJFkveLaJoJGwF93hQWTd5gq+RbEzYCWESJf/NDQ0MyODio//L/8PCwRtizhKh7nKwEsI05SYlDdHp6WjY2NuTw8FDOzs6kXC5rUKaOZ7ShbQohjsetrQD24rIt8ZGREVleXpbT01OpVqtSr9clynhGG9rig28CIWWPW1sBJBTXJuji4qJcXFzI6+trJOkowwdfYlgKcD1ubQWQFWtxoz42Nib7+/tSq9UiCX58fGiSgHKUEYNYxGwzGzWPW3oBdDA1NaVH7vPzs4XM8/OzXF1daUKrq6t6dAFl6nhGm6ARi5jEjhGRTQCB5+fnpVKptBB4eXmRk5MTTXZ0dFS3DQPPaENbfIJGbPqIEJFeAAEXFhbk4eGhpdO7uztZWVmx3lnMjoUPvkGjD/oKiZVeACPH9PuNHYWRnJycTLW344MvMYI7F33RZ24CxsfH5f7+vtHB+/u7HBwcNH4uScn7RRCDWMQ0Rl/0mesa2N7elqenJ429vb1Gho0iZjKvyb5xQolFTBOfvnJfxHQyMzOjEUXekCTbrq2taSKAMnX+Nini57ONRhEwu9Tx8bG4rtu091Omjmcxu0y7mcouIAocCXZ2dvT0tzPa0BafhGumMwLIoEdHR7HZNmi0xQffQgUw3bu7uy1Z+e3tTa6vr/UJFFCmzm/44JtgF+vMDJyfnzcRIxGtr683ZWTK1AURIb6Fz8Dm5qY+3zCit7e3Mjc3Fzqq1M3OzsrNzY1OXPjgW/gMsOUtLS3pEZ6YmIglxDPa0BafuFzyZQIMMdvXxQyvlp0TEEc0w3twcQLMQY0MDNIe+AoRYDIyR2UWK6Acl4G/lQAWJrcQQaMu4aJNLcD6pT4MwaO3sYgjchJYv9RbX6uEgTPO5eVliwDqUpx//LC+Vkl8seUHv3PHceTx8bFBnjJ1GdeA9cVW6qtFP8i65n2AcpZYpYRXi7lc7uacBxJf7n636/U/fm6xFhDxsz5whAjo8dT/nE9MESJ+zke+GBFmi/3+n1nDhKidJEpUR9G1rnXY/gMeoMKv1vwOrwAAAABJRU5ErkJggg==";
@@ -757,6 +1194,13 @@
   let state = null;
   let selectedRuleIndex = null;
   let editingRuleIndex = null;
+
+  // Logs state
+  let currentTab = 'dashboard';
+  let logsData = [];
+  let currentLogFilter = 'all';
+  let logSearchQuery = '';
+  let logsPollInterval = null;
 
   // Window drag handler
   document.getElementById('drag-region').addEventListener('mousedown', (e) => {
@@ -778,6 +1222,12 @@
   window.__renderState = function(newState) {
     state = newState;
     render();
+  };
+
+  window.__renderLogs = function(entries) {
+    if (!Array.isArray(entries)) return;
+    logsData = entries;
+    renderLogsList();
   };
 
   function render() {
@@ -952,7 +1402,184 @@
 
   document.getElementById('btn-apply-now').addEventListener('click', () => sendIpc('apply_now'));
   document.getElementById('btn-clear-proxy').addEventListener('click', () => sendIpc('clear_proxy'));
-  document.getElementById('btn-open-log').addEventListener('click', () => sendIpc('open_log'));
+  document.getElementById('btn-open-log').addEventListener('click', () => switchTab('logs'));
+
+  // Navigation tab switcher
+  function switchTab(tab) {
+    currentTab = tab;
+    const viewDashboard = document.getElementById('view-dashboard');
+    const viewLogs = document.getElementById('view-logs');
+    const tabDashboard = document.getElementById('tab-dashboard');
+    const tabLogs = document.getElementById('tab-logs');
+
+    if (tab === 'logs') {
+      viewDashboard.style.display = 'none';
+      viewLogs.style.display = 'flex';
+      tabDashboard.classList.remove('active');
+      tabLogs.classList.add('active');
+      sendIpc('get_logs');
+      if (!logsPollInterval) {
+        logsPollInterval = setInterval(() => {
+          if (currentTab === 'logs') {
+            sendIpc('get_logs');
+          }
+        }, 2500);
+      }
+    } else {
+      viewLogs.style.display = 'none';
+      viewDashboard.style.display = 'grid';
+      tabLogs.classList.remove('active');
+      tabDashboard.classList.add('active');
+      if (logsPollInterval) {
+        clearInterval(logsPollInterval);
+        logsPollInterval = null;
+      }
+    }
+  }
+
+  document.getElementById('tab-dashboard').addEventListener('click', () => switchTab('dashboard'));
+  document.getElementById('tab-logs').addEventListener('click', () => switchTab('logs'));
+  document.getElementById('btn-back-dashboard').addEventListener('click', () => switchTab('dashboard'));
+
+  // Render log entries
+  function renderLogsList() {
+    const container = document.getElementById('logs-container');
+    const badgeNav = document.getElementById('logs-total-badge');
+    const countAll = document.getElementById('chip-all-count');
+    const countInfo = document.getElementById('chip-info-count');
+    const countWarn = document.getElementById('chip-warn-count');
+    const countError = document.getElementById('chip-error-count');
+    const statusText = document.getElementById('logs-status-text');
+
+    let numInfo = 0;
+    let numWarn = 0;
+    let numError = 0;
+    logsData.forEach(e => {
+      const lvl = (e.level || 'INFO').toUpperCase();
+      if (lvl === 'WARN') numWarn++;
+      else if (lvl === 'ERROR') numError++;
+      else numInfo++;
+    });
+
+    if (badgeNav) badgeNav.innerText = logsData.length;
+    if (countAll) countAll.innerText = logsData.length;
+    if (countInfo) countInfo.innerText = numInfo;
+    if (countWarn) countWarn.innerText = numWarn;
+    if (countError) countError.innerText = numError;
+
+    // Filter by level and search query
+    const query = logSearchQuery.toLowerCase().trim();
+    const filtered = logsData.filter(e => {
+      const lvl = (e.level || 'INFO').toUpperCase();
+      if (currentLogFilter === 'info' && lvl !== 'INFO') return false;
+      if (currentLogFilter === 'warn' && lvl !== 'WARN') return false;
+      if (currentLogFilter === 'error' && lvl !== 'ERROR') return false;
+      if (query) {
+        const full = `${e.timestamp} ${lvl} ${e.message}`.toLowerCase();
+        if (!full.includes(query)) return false;
+      }
+      return true;
+    });
+
+    if (statusText) {
+      statusText.innerText = `Showing ${filtered.length} of ${logsData.length} entries`;
+    }
+
+    if (filtered.length === 0) {
+      container.innerHTML = `
+        <div class="log-empty-state">
+          <svg class="log-empty-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          <div>${logsData.length === 0 ? 'No log entries recorded yet.' : 'No entries matching filter criteria.'}</div>
+        </div>
+      `;
+      return;
+    }
+
+    const fragment = document.createDocumentFragment();
+    filtered.forEach(entry => {
+      const row = document.createElement('div');
+      row.className = 'log-row';
+
+      const timeCol = document.createElement('div');
+      timeCol.className = 'log-time';
+      timeCol.innerText = entry.timestamp || '-';
+
+      const lvlCol = document.createElement('div');
+      lvlCol.className = 'log-level';
+      const badge = document.createElement('span');
+      const lvl = (entry.level || 'INFO').toUpperCase();
+      badge.className = `log-badge level-${lvl.toLowerCase()}`;
+      badge.innerText = lvl;
+      lvlCol.appendChild(badge);
+
+      const msgCol = document.createElement('div');
+      msgCol.className = 'log-msg';
+      msgCol.innerText = entry.message || '';
+
+      row.appendChild(timeCol);
+      row.appendChild(lvlCol);
+      row.appendChild(msgCol);
+      fragment.appendChild(row);
+    });
+
+    container.innerHTML = '';
+    container.appendChild(fragment);
+
+    // Auto-scroll if enabled
+    const chkAutoscroll = document.getElementById('chk-log-autoscroll');
+    if (chkAutoscroll && chkAutoscroll.checked) {
+      container.scrollTop = container.scrollHeight;
+    }
+  }
+
+  // Filter chips click
+  document.querySelectorAll('.filter-chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentLogFilter = btn.dataset.level || 'all';
+      renderLogsList();
+    });
+  });
+
+  // Search input & clear
+  const searchInput = document.getElementById('input-log-search');
+  const searchClear = document.getElementById('btn-clear-search');
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      logSearchQuery = e.target.value;
+      if (searchClear) {
+        searchClear.style.display = logSearchQuery ? 'block' : 'none';
+      }
+      renderLogsList();
+    });
+  }
+  if (searchClear) {
+    searchClear.addEventListener('click', () => {
+      if (searchInput) searchInput.value = '';
+      logSearchQuery = '';
+      searchClear.style.display = 'none';
+      renderLogsList();
+      if (searchInput) searchInput.focus();
+    });
+  }
+
+  // Logs actions
+  document.getElementById('btn-refresh-logs').addEventListener('click', () => {
+    sendIpc('get_logs');
+  });
+
+  document.getElementById('btn-clear-logs').addEventListener('click', () => {
+    sendIpc('clear_logs');
+  });
+
+  document.getElementById('btn-open-file-log').addEventListener('click', () => {
+    sendIpc('open_log_file');
+  });
 
   document.getElementById('chk-autostart').addEventListener('change', (e) => {
     sendIpc('toggle_autostart', { enabled: e.target.checked });
