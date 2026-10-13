@@ -1,5 +1,7 @@
 # 📶 Wi-Fi Proxy Auto-Switcher 🚀
 
+[![Build & Release](https://github.com/SahanLochana/proxy_changer/actions/workflows/release.yml/badge.svg)](https://github.com/SahanLochana/proxy_changer/actions/workflows/release.yml)
+
 > ⚡ **100% Vibe Coded Application** ✨ Built with pure vibes, modern Rust, and AI pair-programming! 🤖🎧💻
 
 A lightweight, native Windows system tray application crafted with 🦀 Rust that automatically configures Windows system proxy settings based on the currently connected Wi-Fi SSID.

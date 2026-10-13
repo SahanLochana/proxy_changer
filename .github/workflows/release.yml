@@ -1,0 +1,50 @@
+name: 🚀 Build & Release
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    name: ⚡ Build & Release (Windows)
+    runs-on: windows-latest
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🦀 Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: 💾 Rust Cache
+        uses: Swatinem/rust-cache@v2
+
+      - name: 🧪 Run tests
+        run: cargo test --verbose
+
+      - name: 🔨 Build release executable
+        run: cargo build --release
+
+      - name: 📦 Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: "Latest Build 🚀"
+          body: |
+            ### 📶 Wi-Fi Proxy Auto-Switcher — Automated Build 🚀
+
+            - **Commit:** `${{ github.sha }}`
+            - **Branch:** `${{ github.ref_name }}`
+            - **Platform:** Windows x64 (Native binary)
+
+            #### 📥 Download
+            Download `proxy_changer.exe` below and run directly.
+          files: target/release/proxy_changer.exe
+          make_latest: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
